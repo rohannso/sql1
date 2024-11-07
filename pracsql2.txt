@@ -1,0 +1,119 @@
+CREATE DATABASE IF NOT EXISTS library_db;
+USE library_db;
+
+CREATE TABLE author (
+    authorId INT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    nationality VARCHAR(20)
+);
+
+CREATE TABLE book (
+    bookId INT PRIMARY KEY,
+    title VARCHAR(50) NOT NULL UNIQUE,
+    publication VARCHAR(50),
+    lang VARCHAR(20) NOT NULL,
+    authorId INT,
+    FOREIGN KEY (authorId) REFERENCES author(authorId) ON DELETE SET NULL
+);
+
+CREATE VIEW author_books AS
+SELECT b.title, a.name AS author_name
+FROM book b
+JOIN author a ON b.authorId = a.authorId;
+
+CREATE INDEX idx_lang ON book(lang);
+
+CREATE SEQUENCE book_seq START WITH 1 INCREMENT BY 1;
+
+CREATE SYNONYM book_synonym FOR book;
+
+INSERT INTO author (authorId, name, nationality)
+VALUES (1, 'Agatha Christie', 'English'), (2, 'J.K. Rowling', 'British');
+
+INSERT INTO book (bookId, title, publication, lang, authorId)
+VALUES 
+    (1, 'Murder on the Orient Express', 'HarperCollins', 'English', 1), 
+	(2, 'Harry Potter and t	he Sorcerers Stone', 'Bloomsbury', 'English', 2);
+
+
+SELECT * FROM book;
+
+SELECT * FROM author_books;
+
+SELECT title FROM book
+WHERE authorId = (SELECT authorId FROM author WHERE name = 'Agatha Christie');
+
+SELECT lang, COUNT(*) AS book_count FROM book GROUP BY lang;
+
+SELECT * FROM author ORDER BY name DESC;
+
+SELECT title FROM book WHERE lang = 'English';
+
+UPDATE book SET lang = 'French' WHERE title = 'Harry Potter and the Sorcerer''s Stone';
+
+DELETE FROM book WHERE publication = 'Penguin Books';
+
+EXPLAIN SELECT * FROM book WHERE lang = 'English';
+
+SELECT lang, COUNT(*) AS book_count FROM book
+GROUP BY lang
+HAVING book_count > 1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Create database p1;
+
+-- use p1;
+
+-- Create table student(
+-- 	sid int primary key auto_increment,
+-- 	name varchar(50) not null,
+-- 	age int check (age>=18),
+-- 	email varchar(100) unique
+-- )
+
+
+-- create table course(
+-- 	cid int primary key auto_increment,
+-- 	cname varchar(50) not null,
+-- 	sid int,
+-- 	FOREIGN KEY (sid ) references student(sid)
+-- );
+
+-- insert into student (name,age,email) values ("Sohesh",20,"gmail.com");
+-- INSERT INTO Student (name, age, email) VALUES ('Bob Smith', 22, 'bob@example.com');
+
+-- INSERT INTO Course (cname, sid) VALUES ('Mathematics', 1);
+-- INSERT INTO Course (cname, sid) VALUES ('Computer Science', 2);
+
+-- -- alter table course drop column cid int primary key auto_increment; 
+
